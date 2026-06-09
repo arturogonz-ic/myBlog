@@ -1,6 +1,6 @@
+packages:
+  - '.'
+
 allowBuilds:
   esbuild: true
   sharp: true
-minimumReleaseAgeExclude:
-  - '@astrojs/mdx@6.0.3'
-  - astro@6.4.5
