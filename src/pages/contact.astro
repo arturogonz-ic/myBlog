@@ -1,0 +1,315 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Contact - ${SITE_TITLE}`} description="Get in touch with me" />
+		<style>
+			main {
+				width: 960px;
+				max-width: calc(100% - 2em);
+				margin: auto;
+				padding: 3em 1em;
+			}
+
+			.contact-header {
+				text-align: center;
+				margin-bottom: 2em;
+			}
+
+			.contact-header h1 {
+				margin: 0 0 0.5em 0;
+				font-size: 2.5em;
+				color: var(--text-primary);
+			}
+
+			.contact-header p {
+				color: var(--text-secondary);
+				font-size: 1.1em;
+				margin: 0;
+			}
+
+			.contact-content {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 3em;
+				margin-top: 2em;
+			}
+
+			.contact-info {
+				background-color: var(--bg-secondary);
+				padding: 2em;
+				border-radius: 8px;
+			}
+
+			.contact-info h2 {
+				margin-top: 0;
+				color: var(--text-primary);
+			}
+
+			.contact-method {
+				margin: 1.5em 0;
+				padding: 1em;
+				background-color: var(--bg-primary);
+				border-left: 4px solid var(--accent);
+				border-radius: 4px;
+			}
+
+			.contact-method h3 {
+				margin: 0 0 0.5em 0;
+				font-size: 1.1em;
+				color: var(--text-primary);
+			}
+
+			.contact-method p {
+				margin: 0;
+				color: var(--text-secondary);
+			}
+
+			.contact-method a {
+				color: var(--accent);
+				text-decoration: none;
+			}
+
+			.contact-method a:hover {
+				text-decoration: underline;
+			}
+
+			.contact-form {
+				background-color: var(--bg-secondary);
+				padding: 2em;
+				border-radius: 8px;
+			}
+
+			.contact-form h2 {
+				margin-top: 0;
+				color: var(--text-primary);
+			}
+
+			.form-group {
+				margin-bottom: 1.5em;
+			}
+
+			.form-group label {
+				display: block;
+				margin-bottom: 0.5em;
+				color: var(--text-primary);
+				font-weight: 500;
+			}
+
+			.form-group input,
+			.form-group textarea {
+				width: 100%;
+				padding: 0.75em;
+				border: 1px solid var(--border-color);
+				border-radius: 4px;
+				background-color: var(--bg-primary);
+				color: var(--text-primary);
+				font-family: inherit;
+				font-size: 1em;
+				transition: border-color 0.2s;
+				box-sizing: border-box;
+			}
+
+			.form-group input:focus,
+			.form-group textarea:focus {
+				outline: none;
+				border-color: var(--accent);
+				box-shadow: 0 0 0 3px rgba(35, 55, 255, 0.1);
+			}
+
+			.form-group textarea {
+				resize: vertical;
+				min-height: 150px;
+			}
+
+			.honeypot {
+				display: none;
+			}
+
+			.form-actions {
+				display: flex;
+				gap: 1em;
+				justify-content: flex-end;
+			}
+
+			.form-actions button,
+			.form-actions a {
+				padding: 0.75em 1.5em;
+				border-radius: 4px;
+				border: none;
+				font-size: 1em;
+				font-weight: 600;
+				cursor: pointer;
+				transition: all 0.2s;
+			}
+
+			.submit-btn {
+				background-color: var(--accent);
+				color: white;
+				text-decoration: none;
+			}
+
+			.submit-btn:hover {
+				transform: translateY(-2px);
+				box-shadow: var(--shadow);
+			}
+
+			.clear-btn {
+				background-color: var(--border-color);
+				color: var(--text-primary);
+				border: none;
+				cursor: pointer;
+			}
+
+			.clear-btn:hover {
+				background-color: #d1d5db;
+			}
+
+			.form-message {
+				margin-top: 1em;
+				padding: 1em;
+				border-radius: 4px;
+				display: none;
+				text-align: center;
+			}
+
+			.form-message.success {
+				background-color: #d1fae5;
+				color: #065f46;
+				display: block;
+			}
+
+			.form-message.error {
+				background-color: #fee2e2;
+				color: #991b1b;
+				display: block;
+			}
+
+			@media (max-width: 720px) {
+				main {
+					padding: 1.5em;
+				}
+
+				.contact-header h1 {
+					font-size: 1.8em;
+				}
+
+				.contact-content {
+					grid-template-columns: 1fr;
+					gap: 2em;
+				}
+
+				.form-actions {
+					flex-direction: column;
+				}
+
+				.form-actions button,
+				.form-actions a {
+					width: 100%;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<Header />
+		<main>
+			<section class="contact-header">
+				<h1>Get in Touch</h1>
+				<p>Have a question? Feel free to reach out</p>
+			</section>
+
+			<div class="contact-content">
+				<div class="contact-info">
+					<h2>Contact Information</h2>
+					<div class="contact-method">
+						<h3>Email</h3>
+						<p>
+							<a href="mailto:arturo.gonzalez@iconos.mx">arturo.gonzalez@iconos.mx</a>
+						</p>
+					</div>
+					<div class="contact-method">
+						<h3>GitHub</h3>
+						<p>
+							<a href="https://github.com" target="_blank">Visit my GitHub</a>
+						</p>
+					</div>
+					<div class="contact-method">
+						<h3>Response Time</h3>
+						<p>I typically respond within 24-48 hours</p>
+					</div>
+				</div>
+
+				<div class="contact-form">
+					<h2>Send a Message</h2>
+					<form id="contact-form" name="contact" method="POST" netlify netlify-honeypot="bot-field">
+						<input type="hidden" name="form-name" value="contact" />
+
+						<!-- Honeypot field for spam protection -->
+						<div class="honeypot">
+							<input type="text" name="bot-field" />
+						</div>
+
+						<div class="form-group">
+							<label for="name">Name *</label>
+							<input type="text" id="name" name="name" required />
+						</div>
+
+						<div class="form-group">
+							<label for="email">Email *</label>
+							<input type="email" id="email" name="email" required />
+						</div>
+
+						<div class="form-group">
+							<label for="subject">Subject *</label>
+							<input type="text" id="subject" name="subject" required />
+						</div>
+
+						<div class="form-group">
+							<label for="message">Message *</label>
+							<textarea id="message" name="message" required></textarea>
+						</div>
+
+						<div class="form-actions">
+							<button type="reset" class="clear-btn">Clear</button>
+							<button type="submit" class="submit-btn">Send Message</button>
+						</div>
+
+						<div class="form-message" id="form-message"></div>
+					</form>
+				</div>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<script>
+	const form = document.getElementById('contact-form');
+	const messageEl = document.getElementById('form-message');
+
+	if (form) {
+		form.addEventListener('submit', async (e) => {
+			const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+			const originalText = submitBtn.textContent;
+			submitBtn.disabled = true;
+			submitBtn.textContent = 'Sending...';
+
+			// The form will be submitted through Netlify's form handling
+			// This is just for client-side feedback
+			setTimeout(() => {
+				messageEl.textContent = 'Message sent! Thanks for reaching out.';
+				messageEl.classList.add('success');
+				submitBtn.disabled = false;
+				submitBtn.textContent = originalText;
+				form.reset();
+			}, 1500);
+		});
+	}
+</script>

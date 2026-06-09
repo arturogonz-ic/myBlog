@@ -1,20 +1,56 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
+import { isDraft } from '../../utils/draft';
+
+function getRecommendedPosts(
+	posts: CollectionEntry<'blog'>[],
+	currentPost: CollectionEntry<'blog'>,
+	limit: number = 3
+) {
+	const tags = currentPost.data.tags || [];
+	const publishedPosts = posts.filter((p) => !isDraft(p.body));
+
+	// Get posts with matching tags
+	const tagMatches = publishedPosts
+		.filter((p) => p.id !== currentPost.id && p.data.tags?.some((t) => tags.includes(t)))
+		.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+	// If we need more, fill with recent posts
+	const recommended = tagMatches.slice(0, limit);
+	if (recommended.length < limit) {
+		const recent = publishedPosts
+			.filter((p) => p.id !== currentPost.id && !recommended.find((r) => r.id === p.id))
+			.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+			.slice(0, limit - recommended.length);
+		recommended.push(...recent);
+	}
+
+	return recommended;
+}
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog');
-	return posts.map((post) => ({
+	const publishedPosts = posts.filter((post) => !isDraft(post.body));
+
+	return publishedPosts.map((post) => ({
 		params: { slug: post.id },
-		props: post,
+		props: {
+			post,
+			allPosts: posts,
+		},
 	}));
 }
-type Props = CollectionEntry<'blog'>;
+type Props = {
+	post: CollectionEntry<'blog'>;
+	allPosts: CollectionEntry<'blog'>[];
+};
 
-const post = Astro.props;
+const { post, allPosts } = Astro.props;
 const { Content } = await render(post);
+const recommendedPosts = getRecommendedPosts(allPosts, post, 3);
 ---
 
-<BlogPost {...post.data}>
+<BlogPost {...post.data} recommendedPosts={recommendedPosts}>
 	<Content />
 </BlogPost>

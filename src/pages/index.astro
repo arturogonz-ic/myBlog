@@ -1,48 +1,276 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { isDraft } from '../utils/draft';
+
+const allPosts = await getCollection('blog');
+const posts = allPosts.filter((post) => !isDraft(post.body));
+
+// Sort by date descending and get the latest 5
+const recentPosts = posts
+	.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+	.slice(0, 5);
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<style>
+			main {
+				width: 960px;
+				max-width: calc(100% - 2em);
+				margin: auto;
+				padding: 0 1em;
+			}
+
+			.hero {
+				padding: 4em 2em;
+				text-align: center;
+				background: linear-gradient(135deg, var(--bg-secondary), transparent);
+				border-radius: 12px;
+				margin: 3em 0;
+			}
+
+			.hero h1 {
+				margin: 0 0 0.5em 0;
+				font-size: 3em;
+				color: var(--text-primary);
+				line-height: 1.2;
+			}
+
+			.hero p {
+				margin: 0;
+				font-size: 1.2em;
+				color: var(--text-secondary);
+				max-width: 600px;
+				margin-left: auto;
+				margin-right: auto;
+			}
+
+			.cta-button {
+				display: inline-block;
+				margin-top: 1.5em;
+				padding: 1em 2em;
+				background-color: var(--accent);
+				color: white;
+				text-decoration: none;
+				border-radius: 8px;
+				transition: transform 0.2s, box-shadow 0.2s;
+				font-weight: 600;
+			}
+
+			.cta-button:hover {
+				transform: translateY(-2px);
+				box-shadow: var(--shadow);
+			}
+
+			.featured-section {
+				margin: 3em 0;
+			}
+
+			.featured-section h2 {
+				margin: 0 0 1.5em 0;
+				font-size: 2em;
+				color: var(--text-primary);
+				text-align: center;
+			}
+
+			.posts-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+				gap: 2em;
+				margin-bottom: 3em;
+			}
+
+			.post-card {
+				background-color: var(--bg-secondary);
+				border-radius: 8px;
+				overflow: hidden;
+				transition: transform 0.2s, box-shadow 0.2s;
+				display: flex;
+				flex-direction: column;
+			}
+
+			.post-card:hover {
+				transform: translateY(-4px);
+				box-shadow: var(--shadow);
+			}
+
+			.post-image {
+				width: 100%;
+				height: 180px;
+				overflow: hidden;
+				background-color: var(--border-color);
+			}
+
+			.post-image img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+
+			.post-image.empty {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: var(--text-secondary);
+				font-size: 0.9em;
+			}
+
+			.post-content {
+				padding: 1.5em;
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+			}
+
+			.post-card a {
+				text-decoration: none;
+				color: inherit;
+			}
+
+			.post-title {
+				margin: 0 0 0.5em 0;
+				font-size: 1.3em;
+				color: var(--text-primary);
+				line-height: 1.3;
+			}
+
+			.post-card a:hover .post-title {
+				color: var(--accent);
+			}
+
+			.post-meta {
+				font-size: 0.85em;
+				color: var(--text-secondary);
+				margin-bottom: 0.75em;
+			}
+
+			.post-meta-item {
+				margin-right: 1em;
+			}
+
+			.post-description {
+				color: var(--text-secondary);
+				flex: 1;
+				line-height: 1.6;
+				font-size: 0.95em;
+			}
+
+			.empty-state {
+				text-align: center;
+				padding: 3em 1em;
+				color: var(--text-secondary);
+			}
+
+			.empty-state h3 {
+				color: var(--text-primary);
+				margin-bottom: 0.5em;
+			}
+
+			.view-all {
+				display: block;
+				text-align: center;
+				padding: 2em 0;
+				margin-top: 1em;
+			}
+
+			.view-all-button {
+				display: inline-block;
+				padding: 0.75em 1.5em;
+				background-color: var(--bg-secondary);
+				color: var(--accent);
+				text-decoration: none;
+				border-radius: 6px;
+				transition: background-color 0.2s;
+				font-weight: 500;
+			}
+
+			.view-all-button:hover {
+				background-color: var(--border-color);
+			}
+
+			@media (max-width: 720px) {
+				main {
+					padding: 1em;
+				}
+
+				.hero {
+					padding: 2em 1em;
+					margin: 2em 0;
+				}
+
+				.hero h1 {
+					font-size: 2em;
+				}
+
+				.hero p {
+					font-size: 1em;
+				}
+
+				.posts-grid {
+					grid-template-columns: 1fr;
+				}
+			}
+		</style>
 	</head>
+
 	<body>
 		<Header />
 		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
-				serves as a lightweight, minimally-styled starting point for anyone looking to build a personal
-				website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
+			<section class="hero">
+				<h1>Welcome to My Blog</h1>
+				<p>Thoughts on web development, design, and technology</p>
+				<a href="/blog" class="cta-button">Read the Blog →</a>
+			</section>
+
+			{recentPosts.length > 0 && (
+				<section class="featured-section">
+					<h2>Latest Posts</h2>
+					<div class="posts-grid">
+						{recentPosts.map((post) => (
+							<article class="post-card">
+								<a href={`/blog/${post.id}`}>
+									<div class="post-image">
+										{post.data.image ? (
+											<img src={post.data.image} alt={post.data.title} />
+										) : (
+											<div class="empty">No image</div>
+										)}
+									</div>
+									<div class="post-content">
+										<h3 class="post-title">{post.data.title}</h3>
+										<div class="post-meta">
+											<span class="post-meta-item">{post.data.author}</span>
+											<span class="post-meta-item">
+												<FormattedDate date={post.data.date} />
+											</span>
+										</div>
+										<p class="post-description">{post.data.description}</p>
+									</div>
+								</a>
+							</article>
+						))}
+					</div>
+					<div class="view-all">
+						<a href="/blog" class="view-all-button">View All Posts →</a>
+					</div>
+				</section>
+			)}
+
+			{recentPosts.length === 0 && (
+				<section class="featured-section">
+					<div class="empty-state">
+						<h3>No posts yet</h3>
+						<p>Check back soon for fresh content!</p>
+					</div>
+				</section>
+			)}
 		</main>
 		<Footer />
 	</body>

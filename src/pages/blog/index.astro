@@ -1,114 +1,381 @@
 ---
-import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import { isDraft } from '../../utils/draft';
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const allPosts = await getCollection('blog');
+const posts = allPosts.filter((post) => !isDraft(post.body));
+
+// Sort by date descending
+posts.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+// Get unique tags from published posts
+const allTags = Array.from(
+	new Set(posts.flatMap((post) => post.data.tags || []))
+).sort();
+
+// Don't filter on server - we'll do it with JavaScript for better interactivity
+const filteredPosts = posts;
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead title={`Blog - ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
 		<style>
 			main {
 				width: 960px;
+				max-width: calc(100% - 2em);
+				margin: auto;
+				padding: 2em 1em;
 			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
+
+			.blog-header {
 				text-align: center;
+				margin-bottom: 2em;
 			}
-			ul li:first-child img {
+
+			.blog-header h1 {
+				margin: 0 0 0.5em 0;
+				font-size: 2.5em;
+				color: var(--text-primary);
+			}
+
+			.blog-header p {
+				color: var(--text-secondary);
+				font-size: 1.1em;
+			}
+
+			.tags-section {
+				margin-bottom: 2em;
+			}
+
+			.tags-section h3 {
+				margin: 0 0 1em 0;
+				font-size: 1em;
+				color: var(--text-secondary);
+				text-transform: uppercase;
+			}
+
+			.tags-list {
+				display: flex;
+				gap: 0.5em;
+				flex-wrap: wrap;
+			}
+
+			.tag-button {
+				padding: 0.5em 1em;
+				background-color: var(--bg-secondary);
+				border: 2px solid transparent;
+				border-radius: 20px;
+				cursor: pointer;
+				transition: all 0.2s;
+				font-size: 0.9em;
+				color: var(--text-primary);
+				font-family: inherit;
+			}
+
+			.tag-button:hover {
+				background-color: var(--border-color);
+			}
+
+			.tag-button.active {
+				border-color: var(--accent);
+				background-color: var(--accent);
+				color: white;
+			}
+
+			.posts-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+				gap: 2em;
+				margin-top: 2em;
+			}
+
+			.post-card {
+				background-color: var(--bg-secondary);
+				border-radius: 8px;
+				overflow: hidden;
+				transition: transform 0.2s, box-shadow 0.2s;
+				display: flex;
+				flex-direction: column;
+			}
+
+			.post-card:hover {
+				transform: translateY(-4px);
+				box-shadow: var(--shadow);
+			}
+
+			.post-image {
 				width: 100%;
+				height: 200px;
+				overflow: hidden;
+				background-color: var(--border-color);
 			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
+
+			.post-image img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
 			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
+
+			.post-image.empty {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: var(--text-secondary);
 			}
-			ul li a {
-				display: block;
+
+			.post-content {
+				padding: 1.5em;
+				flex: 1;
+				display: flex;
+				flex-direction: column;
 			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
+
+			.post-card a {
+				text-decoration: none;
+				color: inherit;
 			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
+
+			.post-title {
+				margin: 0 0 0.5em 0;
+				font-size: 1.5em;
+				color: var(--text-primary);
+				line-height: 1.2;
 			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
+
+			.post-card a:hover .post-title {
+				color: var(--accent);
 			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
+
+			.post-meta {
+				font-size: 0.9em;
+				color: var(--text-secondary);
+				margin-bottom: 1em;
 			}
+
+			.post-meta-item {
+				display: inline-block;
+				margin-right: 1em;
+			}
+
+			.post-description {
+				color: var(--text-secondary);
+				flex: 1;
+				margin-bottom: 1em;
+				line-height: 1.6;
+			}
+
+			.post-tags {
+				display: flex;
+				gap: 0.5em;
+				flex-wrap: wrap;
+				margin-top: auto;
+			}
+
+			.post-tag {
+				display: inline-block;
+				padding: 0.25em 0.5em;
+				background-color: var(--border-color);
+				border-radius: 4px;
+				font-size: 0.8em;
+				color: var(--text-primary);
+				text-decoration: none;
+			}
+
+			.post-tag:hover {
+				background-color: var(--accent);
+				color: white;
+			}
+
+			.empty-state {
+				text-align: center;
+				padding: 3em 1em;
+				color: var(--text-secondary);
+			}
+
+			.empty-state h2 {
+				color: var(--text-primary);
+				margin-bottom: 0.5em;
+			}
+
+			.clear-filter {
+				display: inline-block;
+				margin-top: 1em;
+				padding: 0.5em 1em;
+				background-color: var(--bg-secondary);
+				border-radius: 4px;
+				color: var(--accent);
+				text-decoration: none;
+				transition: background-color 0.2s;
+			}
+
+			.clear-filter:hover {
+				background-color: var(--border-color);
+			}
+
 			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
+				main {
+					padding: 1em;
 				}
-				ul li {
-					width: 100%;
-					text-align: center;
+
+				.blog-header h1 {
+					font-size: 1.8em;
 				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
+
+				.posts-grid {
+					grid-template-columns: 1fr;
 				}
 			}
 		</style>
 	</head>
+
 	<body>
 		<Header />
 		<main>
-			<section>
-				<ul>
-					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									{post.data.heroImage && (
-										<Image width={720} height={360} src={post.data.heroImage} alt="" />
-									)}
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</li>
-						))
-					}
-				</ul>
+			<section class="blog-header">
+				<h1>Blog</h1>
+				<p>Thoughts on web development, design, and more</p>
 			</section>
+
+			{allTags.length > 0 && (
+				<section class="tags-section">
+					<h3>Filter by Tag</h3>
+					<div class="tags-list" id="tags-list">
+						{allTags.map((tag) => (
+							<button
+								class="tag-button"
+								data-tag={tag}
+								type="button"
+							>
+								{tag}
+							</button>
+						))}
+						<button class="tag-button" id="clear-filter" type="button" style="display: none;">
+							Clear Filter
+						</button>
+					</div>
+				</section>
+			)}
+
+			{filteredPosts.length > 0 ? (
+				<div class="posts-grid">
+					{filteredPosts.map((post) => (
+						<article class="post-card">
+							<a href={`/blog/${post.id}`}>
+								<div class="post-image">
+									{post.data.image ? (
+										<img src={post.data.image} alt={post.data.title} />
+									) : (
+										<div class="empty">No image</div>
+									)}
+								</div>
+								<div class="post-content">
+									<h2 class="post-title">{post.data.title}</h2>
+									<div class="post-meta">
+										<span class="post-meta-item">{post.data.author}</span>
+										<span class="post-meta-item">
+											<FormattedDate date={post.data.date} />
+										</span>
+									</div>
+									<p class="post-description">{post.data.description}</p>
+									{post.data.tags && post.data.tags.length > 0 && (
+										<div class="post-tags">
+											{post.data.tags.map((tag) => (
+												<a href={`/blog?tag=${tag}`} class="post-tag">
+													#{tag}
+												</a>
+											))}
+										</div>
+									)}
+								</div>
+							</a>
+						</article>
+					))}
+				</div>
+			) : (
+				<div class="empty-state">
+					<h2>No posts found</h2>
+					{selectedTag ? (
+						<>
+							<p>No posts with tag "{selectedTag}"</p>
+							<a href="/blog" class="clear-filter">
+								Clear filter
+							</a>
+						</>
+					) : (
+						<p>No blog posts yet. Check back soon!</p>
+					)}
+				</div>
+			)}
 		</main>
 		<Footer />
+
+		<script>
+			// Client-side tag filtering
+			const tagButtons = document.querySelectorAll('.tag-button[data-tag]');
+			const clearButton = document.getElementById('clear-filter');
+			const postCards = document.querySelectorAll('.post-card');
+
+			function filterByTag(tag) {
+				// Hide/show posts based on tag
+				postCards.forEach((card) => {
+					const tagsText = card.textContent;
+					if (tag === null) {
+						// Show all
+						card.style.display = '';
+					} else {
+						// Check if post has the selected tag
+						const hasTag = card.querySelector(`a[href*="tag=${tag}"]`) !== null;
+						card.style.display = hasTag ? '' : 'none';
+					}
+				});
+
+				// Update button states
+				tagButtons.forEach((btn) => {
+					if (btn.dataset.tag === tag) {
+						btn.classList.add('active');
+					} else {
+						btn.classList.remove('active');
+					}
+				});
+
+				// Show/hide clear button
+				if (clearButton) {
+					clearButton.style.display = tag ? '' : 'none';
+				}
+			}
+
+			// Add click handlers to tag buttons
+			tagButtons.forEach((btn) => {
+				btn.addEventListener('click', () => {
+					const tag = btn.dataset.tag;
+					filterByTag(tag);
+					// Update URL without reloading
+					window.history.replaceState({}, '', `/blog?tag=${tag}`);
+				});
+			});
+
+			// Clear filter button
+			if (clearButton) {
+				clearButton.addEventListener('click', () => {
+					filterByTag(null);
+					window.history.replaceState({}, '', '/blog');
+				});
+			}
+
+			// Check URL on page load to restore filter
+			const urlParams = new URLSearchParams(window.location.search);
+			const urlTag = urlParams.get('tag');
+			if (urlTag) {
+				filterByTag(urlTag);
+			}
+		</script>
 	</body>
 </html>
