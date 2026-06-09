@@ -5,7 +5,7 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 
-const baseUrl = import.meta.env.BASE_URL || '/';
+const baseUrl = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
 
 type Props = CollectionEntry<'blog'>['data'] & {
 	recommendedPosts?: CollectionEntry<'blog'>[];
@@ -137,7 +137,7 @@ const { title, description, date, author, image, tags = [], recommendedPosts = [
 						{tags && tags.length > 0 && (
 							<div class="tags">
 								{tags.map((tag) => (
-									<a href={`${baseUrl}blog/?tag=${tag}`} class="tag">
+									<a href={`${baseUrl}/blog/?tag=${tag}`} class="tag">
 										#{tag}
 									</a>
 								))}
@@ -153,7 +153,7 @@ const { title, description, date, author, image, tags = [], recommendedPosts = [
 								{recommendedPosts.map((post) => (
 									<div class="post-item">
 										<h3>
-											<a href={`${baseUrl}blog/${post.id}`}>{post.data.title}</a>
+											<a href={`${baseUrl}/blog/${post.id}`}>{post.data.title}</a>
 										</h3>
 										<p class="post-meta">
 											By {post.data.author} • <FormattedDate date={post.data.date} />

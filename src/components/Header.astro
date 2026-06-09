@@ -3,10 +3,10 @@ import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
 import ThemeSwitcher from './ThemeSwitcher.astro';
 
-const baseUrl = import.meta.env.BASE_URL || '/';
-const homeUrl = baseUrl;
-const blogUrl = `${baseUrl}blog/`;
-const aboutUrl = `${baseUrl}about/`;
+const baseUrl = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+const homeUrl = baseUrl || '/';
+const blogUrl = `${baseUrl}/blog/`;
+const aboutUrl = `${baseUrl}/about/`;
 ---
 
 <header>
