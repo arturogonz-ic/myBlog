@@ -4,3 +4,6 @@ packages:
 allowBuilds:
   esbuild: true
   sharp: true
+
+# Disable minimum release age check to allow recent package updates
+minimumReleaseAge: 0
