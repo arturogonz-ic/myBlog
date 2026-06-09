@@ -268,7 +268,7 @@ const filteredPosts = posts;
 				<div class="posts-grid">
 					{filteredPosts.map((post) => (
 						<article class="post-card">
-							<a href={`/blog/${post.id}`}>
+							<a href={`./${post.id}`}>
 								<div class="post-image">
 									{post.data.image ? (
 										<img src={post.data.image} alt={post.data.title} />
@@ -288,7 +288,7 @@ const filteredPosts = posts;
 									{post.data.tags && post.data.tags.length > 0 && (
 										<div class="post-tags">
 											{post.data.tags.map((tag) => (
-												<a href={`/blog?tag=${tag}`} class="post-tag">
+												<a href={`./?tag=${tag}`} class="post-tag">
 													#{tag}
 												</a>
 											))}
@@ -305,7 +305,7 @@ const filteredPosts = posts;
 					{selectedTag ? (
 						<>
 							<p>No posts with tag "{selectedTag}"</p>
-							<a href="/blog" class="clear-filter">
+							<a href="./blog" class="clear-filter">
 								Clear filter
 							</a>
 						</>

@@ -135,7 +135,7 @@ const { title, description, date, author, image, tags = [], recommendedPosts = [
 						{tags && tags.length > 0 && (
 							<div class="tags">
 								{tags.map((tag) => (
-									<a href={`/blog?tag=${tag}`} class="tag">
+									<a href={`../?tag=${tag}`} class="tag">
 										#{tag}
 									</a>
 								))}
@@ -151,7 +151,7 @@ const { title, description, date, author, image, tags = [], recommendedPosts = [
 								{recommendedPosts.map((post) => (
 									<div class="post-item">
 										<h3>
-											<a href={`/blog/${post.id}`}>{post.data.title}</a>
+											<a href={`../${post.id}`}>{post.data.title}</a>
 										</h3>
 										<p class="post-meta">
 											By {post.data.author} • <FormattedDate date={post.data.date} />
