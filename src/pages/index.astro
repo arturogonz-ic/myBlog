@@ -7,6 +7,9 @@ import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import { isDraft } from '../utils/draft';
 
+const baseUrl = import.meta.env.BASE_URL || '/';
+const blogUrl = `${baseUrl}blog/`;
+
 const allPosts = await getCollection('blog');
 const posts = allPosts.filter((post) => !isDraft(post.body));
 
@@ -226,7 +229,7 @@ const recentPosts = posts
 			<section class="hero">
 				<h1>Welcome to My Blog</h1>
 				<p>Thoughts on web development, design, and technology</p>
-				<a href="./blog" class="cta-button">Read the Blog →</a>
+				<a href={blogUrl} class="cta-button">Read the Blog →</a>
 			</section>
 
 			{recentPosts.length > 0 && (
@@ -235,7 +238,7 @@ const recentPosts = posts
 					<div class="posts-grid">
 						{recentPosts.map((post) => (
 							<article class="post-card">
-								<a href={`/blog/${post.id}`}>
+								<a href={`${baseUrl}blog/${post.id}`}>
 									<div class="post-image">
 										{post.data.image ? (
 											<img src={post.data.image} alt={post.data.title} />
@@ -258,7 +261,7 @@ const recentPosts = posts
 						))}
 					</div>
 					<div class="view-all">
-						<a href="./blog" class="view-all-button">View All Posts →</a>
+						<a href={blogUrl} class="view-all-button">View All Posts →</a>
 					</div>
 				</section>
 			)}

@@ -2,15 +2,20 @@
 import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
 import ThemeSwitcher from './ThemeSwitcher.astro';
+
+const baseUrl = import.meta.env.BASE_URL || '/';
+const homeUrl = baseUrl;
+const blogUrl = `${baseUrl}blog/`;
+const aboutUrl = `${baseUrl}about/`;
 ---
 
 <header>
 	<nav>
-		<h2><a href="./">{SITE_TITLE}</a></h2>
+		<h2><a href={homeUrl}>{SITE_TITLE}</a></h2>
 		<div class="internal-links">
-			<HeaderLink href="./">Home</HeaderLink>
-			<HeaderLink href="./blog">Blog</HeaderLink>
-			<HeaderLink href="./about">About</HeaderLink>
+			<HeaderLink href={homeUrl}>Home</HeaderLink>
+			<HeaderLink href={blogUrl}>Blog</HeaderLink>
+			<HeaderLink href={aboutUrl}>About</HeaderLink>
 		</div>
 		<div class="controls">
 			<ThemeSwitcher />
