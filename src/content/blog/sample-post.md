@@ -4,7 +4,7 @@ author: "Arturo Gonzalez"
 date: 2026-06-09
 description: "A sample blog post demonstrating the new blog structure with markdown content generation."
 tags: ["astro", "blogging", "markdown"]
-image: "/images/blog-post-sample.jpg"
+image: "/images/blog-placeholder-1.jpg"
 ---
 
 # Welcome to My Blog
