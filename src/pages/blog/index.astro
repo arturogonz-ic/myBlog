@@ -273,7 +273,7 @@ const filteredPosts = posts;
 							<a href={`${baseUrl}/blog/${post.id}`}>
 								<div class="post-image">
 									{post.data.image ? (
-										<img src={post.data.image} alt={post.data.title} />
+										<img src={`${baseUrl}${post.data.image}`} alt={post.data.title} />
 									) : (
 										<div class="empty">No image</div>
 									)}

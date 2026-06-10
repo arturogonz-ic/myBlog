@@ -124,7 +124,7 @@ const { title, description, date, author, image, tags = [], recommendedPosts = [
 			<article>
 				{image && (
 					<div class="hero-image">
-						<img src={image} alt={title} />
+						<img src={`${baseUrl}${image}`} alt={title} />
 					</div>
 				)}
 				<div class="prose">
