@@ -18,10 +18,10 @@
 			console.log('Applying theme:', theme);
 			if (theme === 'dark') {
 				html.classList.add('dark');
-				if (icon) icon.textContent = '☀️';
+				if (icon) icon.textContent = '🌙';
 			} else {
 				html.classList.remove('dark');
-				if (icon) icon.textContent = '🌙';
+				if (icon) icon.textContent = '☀️';
 			}
 			localStorage.setItem('theme', theme);
 		}
