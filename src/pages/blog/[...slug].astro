@@ -1,7 +1,7 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
-import BlogPost from '../../layouts/BlogPost.astro';
-import { isDraft } from '../../utils/draft';
+import BlogPost from '../../blog/layouts/BlogPost.astro';
+import { isDraft } from '../../blog/utils/draft';
 
 function getRecommendedPosts(
 	posts: CollectionEntry<'blog'>[],
